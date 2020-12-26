@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RK3 ДРЕВО</title>
+    <style>
+        #main_tree{
+            position: relative;
+            margin-left: 30px;
+            width: 75%;
+            
+        }
+        
+        .selected{
+            background-color: #44bd32;
+        }
+        .unselected{
+            background-color: white;
+        }
+        .switch{
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Деревце</h1>
+    <form name="tree1">
+        <input type="button" id="createElem" value="Создать">
+        <input type="button" id="renameElem" value="Переименовать">
+        <input type="button" id="deleteElem" value="Удалить">
+    </form>
+    <br><br>
+   <div id="main_tree" class="unselected">Корневой элемент</div>
+
+   <!--Начало скрипта-->
+   <script>
+        let currentTaskItem=null;           // Текущий элемент
+
+        let mainDiv = document.getElementById("main_tree");
+
+        mainDiv.addEventListener("click",selection);            // Вешаем обработчик событий на Главный элемент Дерева
+
+        /*
+            Выбор элемента
+        */
+        function selection(event){
+            if(event.target.tagName === "DIV"){
+                if(currentTaskItem){                                  // Если предыдущий кликнутый элемент существует, то
+                    //проверку на повторно кликнутый элемент сделать, но это мелочи, сделать завтра !
+                    currentTaskItem.classList.toggle("unselected");
+                    currentTaskItem.classList.toggle("selected");
+
+                    event.target.classList.toggle("unselected");
+                    event.target.classList.toggle("selected");
+                    currentTaskItem = event.target;
+                }
+                else{                                               // Если не существует 
+                    event.target.classList.toggle("unselected");
+                    event.target.classList.toggle("selected");
+                    currentTaskItem = event.target;
+                }
+            }
+        }
+
+    
+        /*
+            Забиндим кнопки
+        */
+        let createBtn = document.getElementById("createElem");
+        createBtn.addEventListener("click", createElement)
+
+        let renameBtn = document.getElementById("renameElem");
+        renameBtn.addEventListener("click",renameElement);
+        
+
+        let deleteBtn = document.getElementById("deleteElem");
+        deleteBtn.addEventListener("click", function(){deleteElement()})
+
+
+
+        /*
+            Описание функций:
+        */
+
+
+        /*
+            Функция по созданию элемента
+        */
+        function createElement(){
+            let text = prompt("Enter Node Name");
+            let element = document.createElement("div");
+            element.classList.add("unselected");
+            element.style.position= "relative";             // Поменял на absolute
+            //element.style.width="50%";
+            element.style.marginLeft = "30px";
+
+            let text_content = document.createTextNode(text);
+        
+            
+            
+            currentTaskItem.appendChild(element);
+            element.appendChild(text_content);
+
+            if(currentTaskItem.children.length == 1){
+                let imgElem = document.createElement("img");
+                imgElem.setAttribute("src","minus.png");
+                imgElem.style.float = "left";
+                currentTaskItem.prepend(imgElem);
+                currentTaskItem.style.marginLeft = "10px";
+
+
+                imgElem.addEventListener("click", function(){hide_view(imgElem)});
+            }
+
+
+
+
+            currentTaskItem.classList.toggle("selected");
+            currentTaskItem.classList.toggle("unselected");
+            currentTaskItem = null;
+
+        }
+
+        /*
+            Общая функция по скрытию/показа детей   hide_view
+        */
+
+        function hide_view(imgElem){
+            let attr = imgElem.getAttribute("src");               
+            if(attr == "minus.png"){
+                hide(imgElem.parentNode);
+                imgElem.parentNode.classList.add("switch")
+                imgElem.setAttribute("src","plus.png");
+            }else{
+                if(attr == "plus.png"){
+                    view(imgElem.parentNode);
+                    imgElem.parentNode.classList.remove("switch")
+                    imgElem.setAttribute("src","minus.png")
+                }
+            }
+        }
+
+        /*
+            Функция по скрытию дочерних элементов       hide
+        */
+        function hide(elems){
+            for(let i=0; i<elems.children.length; i++){
+                if(elems.children[i].tagName === "IMG"){
+                    i=i+1;
+                }
+                
+                elems.children[i].style.visibility = "hidden";
+
+                if(elems.children[i].children.length>0){
+                    hide(elems.children[i])
+                }
+            }
+        }
+
+        /*
+            Функция по раскрытию дочерних элементов         view
+        */
+       function view(elems){
+        for(let i=0; i<elems.children.length; i++){
+                if(elems.children[i].tagName === "IMG"){
+                    i=i+1;
+                }
+                if(elems.children[i].children.length>0){
+                    view(elems.children[i])
+                }
+                elems.children[i].style.visibility = "visible";
+            }
+       }
+
+       /*
+            Функция по удалению дочернего элемента
+       */
+        function deleteElement(){
+            if(currentTaskItem.parentNode.children.length == 2){
+            currentTaskItem.parentNode.childNodes[0].remove();
+            }
+            currentTaskItem.parentNode.style.marginLeft = "30px";
+            currentTaskItem.remove();
+        }
+
+        /*
+            Функция по переименованию дочернего элемента
+        */
+        function renameElement(){
+            let new_text=prompt("Enter New Node Name");
+            if(currentTaskItem.childNodes[0].tagName === "IMG"){
+                currentTaskItem.childNodes[1].data=new_text;
+            }
+            else{
+                currentTaskItem.childNodes[0].data=new_text;
+            }
+
+            
+        }
+   </script>
+</body>
+</html>
