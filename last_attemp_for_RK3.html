@@ -18,7 +18,7 @@
             background-color: white;
         }
         .switch{
-            height: 20px;
+            height: 21px;
         }
     </style>
 </head>
@@ -38,31 +38,10 @@
 
         let mainDiv = document.getElementById("main_tree");
 
-        mainDiv.addEventListener("click",selection);            // Вешаем обработчик событий на Главный элемент Дерева
+        mainDiv.addEventListener("click",selected);            // Вешаем обработчик событий на Главный элемент Дерева
 
-        /*
-            Выбор элемента
-        */
-        function selection(event){
-            if(event.target.tagName === "DIV"){
-                if(currentTaskItem){                                  // Если предыдущий кликнутый элемент существует, то
-                    //проверку на повторно кликнутый элемент сделать, но это мелочи, сделать завтра !
-                    currentTaskItem.classList.toggle("unselected");
-                    currentTaskItem.classList.toggle("selected");
+        /*Функция по выделению элемента selected в самом конце*/
 
-                    event.target.classList.toggle("unselected");
-                    event.target.classList.toggle("selected");
-                    currentTaskItem = event.target;
-                }
-                else{                                               // Если не существует 
-                    event.target.classList.toggle("unselected");
-                    event.target.classList.toggle("selected");
-                    currentTaskItem = event.target;
-                }
-            }
-        }
-
-    
         /*
             Забиндим кнопки
         */
@@ -197,6 +176,35 @@
 
             
         }
+
+        /*
+            Новая функция по выделению элемента
+        */
+
+        function selected(event){
+            if(event.target.tagName === "DIV"){
+                if(currentTaskItem){
+                    if(currentTaskItem == event.target){
+                        event.target.classList.toggle("selected");
+                        event.target.classList.toggle("unselected");
+                        currentTaskItem = null;
+                    }
+                    else{
+                        event.target.classList.toggle("selected");
+                        event.target.classList.toggle("unselected");
+
+                        currentTaskItem.classList.toggle("selected");
+                        currentTaskItem.classList.toggle("unselected");
+
+                        currentTaskItem = event.target;
+                    }
+                }
+                else{
+                    event.target.classList.toggle("selected");
+                    event.target.classList.toggle("unselected");
+                    currentTaskItem=event.target;
+                }
+        }   }
    </script>
 </body>
 </html>
